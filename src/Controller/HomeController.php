@@ -11,7 +11,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class HomeController extends AbstractController
 {
-    #[Route(path: '/', name: 'app_default')]
+    #[Route(path: '/home', name: 'app_default')]
     public function index(Request $request): Response
     {
         return $this->render('home/index.html.twig');
@@ -20,8 +20,6 @@ class HomeController extends AbstractController
     #[Route('/error_page', name: 'page_error_index', methods: ['GET', 'POST'])]
     public function errorIndex(Request $request): Response
     {
-        return $this->render('error.html.twig', [
-           
-        ]); 
+        return $this->render('error.html.twig', []);
     }
 }

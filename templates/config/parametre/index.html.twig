@@ -97,6 +97,33 @@
             {% endfor %}
             
         </div>
+        {% else %}
+      <div class="row">
+        <div class="col-sm-12">
+         <div class="d-flex flex-column flex-center flex-column-fluid">
+                    <!--begin::Content-->
+                    <div class="d-flex flex-column flex-center text-center ">
+                        <!--begin::Wrapper-->
+                        <div class="card card-flush w-lg-650px py-5">
+                            <div class="card-body py-1 py-lg-20" style="margin-top: -88px">
+
+                                <!--begin::Title-->
+                                 {% include "_includes/message_error.html.twig" %}
+                                <!--end::Title-->
+                                <!--begin::Illustration-->
+                               
+
+
+                            </div>
+                        </div>
+                        <!--end::Wrapper-->
+                    </div>
+                    <!--end::Content-->
+                </div>
+        </div>
+      
+      </div>
+
         {% endif %}
     </div>
 </div>

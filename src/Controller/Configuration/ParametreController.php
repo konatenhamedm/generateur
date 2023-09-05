@@ -14,42 +14,12 @@ use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
 
-#[Route('/admin/config/parametere')]
+#[Route('/admin/config/parametre')]
 class ParametreController extends BaseController
 {
 
     const INDEX_ROOT_NAME = 'app_config_parametre_index';
 
-
-    #[Route('/api/civilite', name: 'api_civilite_liste', methods: ['GET','POST'])]
-    public function liste1(CiviliteRepository $civiliteRepository){
-        $data = $civiliteRepository->findAll();
-
-        // On spécifie qu'on utilise l'encodeur JSON
-        $encoders = [new JsonEncoder()];
-
-        // On instancie le "normaliseur" pour convertir la collection en tableau
-        $normalizers = [new ObjectNormalizer()];
-
-        // On instancie le convertisseur
-        $serializer = new Serializer($normalizers, $encoders);
-
-        // On convertit en json
-        $jsonContent = $serializer->serialize($data, 'json', [
-            'circular_reference_handler' => function ($object) {
-                return $object->getId();
-            }
-        ]);
-
-        // On instancie la réponse
-        $response = new Response($jsonContent);
-
-        // On ajoute l'entête HTTP
-        $response->headers->set('Content-Type', 'application/json');
-
-        // On envoie la réponse
-        return $response;
-    }
 
     /* private $menu;
      public function __construct(Menu $menu){
@@ -60,7 +30,7 @@ class ParametreController extends BaseController
     public function index(Request $request, Breadcrumb $breadcrumb): Response
     {
 
-        $permission = $this->menu->getPermissionIfDifferentNull($this->security->getUser()->getGroupe()->getId(),self::INDEX_ROOT_NAME);
+        $permission = $this->menu->getPermissionIfDifferentNull($this->security->getUser()->getGroupe()->getId(), self::INDEX_ROOT_NAME);
 
         /* if($this->menu->getPermission()){
              $redirect = $this->generateUrl('app_default');
@@ -113,7 +83,7 @@ class ParametreController extends BaseController
          */
         $parametres = [
 
-            'utilisateur'=>[
+            'utilisateur' => [
 
                 [
                     'label' => 'Groupes modules',
@@ -137,7 +107,7 @@ class ParametreController extends BaseController
                 ]
 
             ],
-            'rh'=>[
+            'rh' => [
                 [
                     'label' => 'Fonction',
                     'id' => 'param_categorie',
@@ -154,7 +124,7 @@ class ParametreController extends BaseController
                     'id' => 'param_client',
                     'href' => $this->generateUrl('app_utilisateur_employe_index')
                 ],
-              /*  [
+                /*  [
                     'label' => 'Fournisseur',
                     'id' => 'param_fournisseur',
                     'href' => $this->generateUrl('app_rh_fournisseur_index')
@@ -168,7 +138,7 @@ class ParametreController extends BaseController
                     'label' => 'Civilité',
                     'id' => 'param_article',
                     'href' => $this->generateUrl('app_parametre_civilite_index')
-                ] ,
+                ],
                 [
                     'label' => 'Icons',
                     'id' => 'param_cm',
