@@ -63,6 +63,7 @@ security:
         
         #- { path: ^/profile, roles: ROLE_USER }
         - { path: ^/api/login, roles: PUBLIC_ACCESS }
+        - { path: ^/api/api/login, roles: PUBLIC_ACCESS }
         - { path: ^/_wdt/, role: PUBLIC_ACCESS }
         - { path: ^/_profiler/, role: PUBLIC_ACCESS }
         - { path: ^/js/, role: PUBLIC_ACCESS }
