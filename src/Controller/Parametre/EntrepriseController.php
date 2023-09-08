@@ -2,11 +2,9 @@
 
 namespace App\Controller\Parametre;
 
-use App\Controller\BaseController;
-use App\Entity\Icon;
-use App\Entity\Service;
-use App\Form\ServiceType;
-use App\Repository\ServiceRepository;
+use App\Entity\Entreprise;
+use App\Form\Entreprise1Type;
+use App\Repository\EntrepriseRepository;
 use App\Service\ActionRender;
 use App\Service\FormError;
 use Omines\DataTablesBundle\Adapter\Doctrine\ORMAdapter;
@@ -18,43 +16,42 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use App\Controller\BaseController;
 
-#[Route('/ads/parametre/service')]
-class ServiceController extends BaseController
+#[Route('/ads/parametre/entreprise')]
+class EntrepriseController extends BaseController
 {
+    const INDEX_ROOT_NAME = 'app_parametre_entreprise_index';
 
-    const INDEX_ROOT_NAME = 'app_parametre_service_index';
-
-
-    #[Route('/', name: 'app_parametre_service_index', methods: ['GET', 'POST'])]
+    #[Route('/', name: 'app_parametre_entreprise_index', methods: ['GET', 'POST'])]
     public function index(Request $request, DataTableFactory $dataTableFactory): Response
     {
+
+
         $permission = $this->menu->getPermissionIfDifferentNull($this->security->getUser()->getGroupe()->getId(), self::INDEX_ROOT_NAME);
 
         $table = $dataTableFactory->create()
-            ->add('code', TextColumn::class, ['label' => 'Code'])
-            ->add('libelle', TextColumn::class, ['label' => 'Libellé'])
+            ->add('id', TextColumn::class, ['label' => 'Identifiant'])
             ->createAdapter(ORMAdapter::class, [
-                'entity' => Service::class,
+                'entity' => Entreprise::class,
             ])
-            ->setName('dt_app_parametre_service');
+            ->setName('dt_app_parametre_entreprise');
         if ($permission != null) {
+
             $renders = [
-                'edit' =>  new ActionRender(function () use ($permission) {
+                'edit' => new ActionRender(function () use ($permission) {
                     if ($permission == 'R') {
                         return false;
                     } elseif ($permission == 'RD') {
                         return false;
                     } elseif ($permission == 'RU') {
                         return true;
-                    } elseif ($permission == 'RUD') {
+                    } elseif ($permission == 'CRUD') {
                         return true;
                     } elseif ($permission == 'CRU') {
                         return true;
                     } elseif ($permission == 'CR') {
                         return false;
-                    } else {
-                        return true;
                     }
                 }),
                 'delete' => new ActionRender(function () use ($permission) {
@@ -64,14 +61,12 @@ class ServiceController extends BaseController
                         return true;
                     } elseif ($permission == 'RU') {
                         return false;
-                    } elseif ($permission == 'RUD') {
+                    } elseif ($permission == 'CRUD') {
                         return true;
                     } elseif ($permission == 'CRU') {
                         return false;
                     } elseif ($permission == 'CR') {
                         return false;
-                    } else {
-                        return true;
                     }
                 }),
                 'show' => new ActionRender(function () use ($permission) {
@@ -81,16 +76,13 @@ class ServiceController extends BaseController
                         return true;
                     } elseif ($permission == 'RU') {
                         return true;
-                    } elseif ($permission == 'RUD') {
+                    } elseif ($permission == 'CRUD') {
                         return true;
                     } elseif ($permission == 'CRU') {
                         return true;
                     } elseif ($permission == 'CR') {
                         return true;
-                    } else {
-                        return true;
                     }
-                    return true;
                 }),
 
             ];
@@ -107,21 +99,21 @@ class ServiceController extends BaseController
 
             if ($hasActions) {
                 $table->add('id', TextColumn::class, [
-                    'label' => 'Actions', 'orderable' => false, 'globalSearchable' => false, 'className' => 'grid_row_actions', 'render' => function ($value, Service $context) use ($renders) {
+                    'label' => 'Actions', 'orderable' => false, 'globalSearchable' => false, 'className' => 'grid_row_actions', 'render' => function ($value, Entreprise $context) use ($renders) {
                         $options = [
                             'default_class' => 'btn btn-xs btn-clean btn-icon mr-2 ',
                             'target' => '#exampleModalSizeLg2',
 
                             'actions' => [
                                 'edit' => [
-                                    'url' => $this->generateUrl('app_parametre_service_edit', ['id' => $value]), 'ajax' => true, 'icon' => '%icon% bi bi-pen', 'attrs' => ['class' => 'btn-default'], 'render' => $renders['edit']
+                                    'url' => $this->generateUrl('app_parametre_entreprise_edit', ['id' => $value]), 'ajax' => true, 'icon' => '%icon% bi bi-pen', 'attrs' => ['class' => 'btn-default'], 'render' => $renders['edit']
                                 ],
                                 'show' => [
-                                    'url' => $this->generateUrl('app_parametre_service_show', ['id' => $value]), 'ajax' => true, 'icon' => '%icon% bi bi-eye', 'attrs' => ['class' => 'btn-primary'], 'render' => $renders['show']
+                                    'url' => $this->generateUrl('app_parametre_entreprise_show', ['id' => $value]), 'ajax' => true, 'icon' => '%icon% bi bi-eye', 'attrs' => ['class' => 'btn-primary'], 'render' => $renders['show']
                                 ],
                                 'delete' => [
                                     'target' => '#exampleModalSizeNormal',
-                                    'url' => $this->generateUrl('app_parametre_service_delete', ['id' => $value]), 'ajax' => true, 'icon' => '%icon% bi bi-trash', 'attrs' => ['class' => 'btn-main'],  'render' => $renders['delete']
+                                    'url' => $this->generateUrl('app_parametre_entreprise_delete', ['id' => $value]), 'ajax' => true, 'icon' => '%icon% bi bi-trash', 'attrs' => ['class' => 'btn-main'], 'render' => $renders['delete']
                                 ]
                             ]
 
@@ -139,19 +131,19 @@ class ServiceController extends BaseController
         }
 
 
-        return $this->render('parametre/service/index.html.twig', [
+        return $this->render('parametre/entreprise/index.html.twig', [
             'datatable' => $table,
             'permition' => $permission
         ]);
     }
 
-    #[Route('/new', name: 'app_parametre_service_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, ServiceRepository $serviceRepository, FormError $formError): Response
+    #[Route('/new', name: 'app_parametre_entreprise_new', methods: ['GET', 'POST'])]
+    public function new(Request $request, EntrepriseRepository $entrepriseRepository, FormError $formError): Response
     {
-        $service = new Service();
-        $form = $this->createForm(ServiceType::class, $service, [
+        $entreprise = new Entreprise();
+        $form = $this->createForm(Entreprise1Type::class, $entreprise, [
             'method' => 'POST',
-            'action' => $this->generateUrl('app_parametre_service_new')
+            'action' => $this->generateUrl('app_parametre_entreprise_new')
         ]);
         $form->handleRequest($request);
 
@@ -162,16 +154,14 @@ class ServiceController extends BaseController
 
         if ($form->isSubmitted()) {
             $response = [];
-            $redirect = $this->generateUrl('app_parametre_service_index');
-
-
+            $redirect = $this->generateUrl('app_parametre_entreprise_index');
 
 
             if ($form->isValid()) {
 
-                $serviceRepository->add($service, true);
+                $entrepriseRepository->save($entreprise, true);
                 $data = true;
-                $message       = 'Opération effectuée avec succès';
+                $message = 'Opération effectuée avec succès';
                 $statut = 1;
                 $this->addFlash('success', $message);
             } else {
@@ -183,6 +173,7 @@ class ServiceController extends BaseController
                 }
             }
 
+
             if ($isAjax) {
                 return $this->json(compact('statut', 'message', 'redirect', 'data'), $statutCode);
             } else {
@@ -192,28 +183,28 @@ class ServiceController extends BaseController
             }
         }
 
-        return $this->renderForm('parametre/service/new.html.twig', [
-            'service' => $service,
+        return $this->renderForm('parametre/entreprise/new.html.twig', [
+            'entreprise' => $entreprise,
             'form' => $form,
         ]);
     }
 
-    #[Route('/{id}/show', name: 'app_parametre_service_show', methods: ['GET'])]
-    public function show(Service $service): Response
+    #[Route('/{id}/show', name: 'app_parametre_entreprise_show', methods: ['GET'])]
+    public function show(Entreprise $entreprise): Response
     {
-        return $this->render('parametre/service/show.html.twig', [
-            'service' => $service,
+        return $this->render('parametre/entreprise/show.html.twig', [
+            'entreprise' => $entreprise,
         ]);
     }
 
-    #[Route('/{id}/edit', name: 'app_parametre_service_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Service $service, ServiceRepository $serviceRepository, FormError $formError): Response
+    #[Route('/{id}/edit', name: 'app_parametre_entreprise_edit', methods: ['GET', 'POST'])]
+    public function edit(Request $request, Entreprise $entreprise, EntrepriseRepository $entrepriseRepository, FormError $formError): Response
     {
 
-        $form = $this->createForm(ServiceType::class, $service, [
+        $form = $this->createForm(Entreprise1Type::class, $entreprise, [
             'method' => 'POST',
-            'action' => $this->generateUrl('app_parametre_service_edit', [
-                'id' =>  $service->getId()
+            'action' => $this->generateUrl('app_parametre_entreprise_edit', [
+                'id' => $entreprise->getId()
             ])
         ]);
 
@@ -227,16 +218,14 @@ class ServiceController extends BaseController
 
         if ($form->isSubmitted()) {
             $response = [];
-            $redirect = $this->generateUrl('app_parametre_service_index');
-
-
+            $redirect = $this->generateUrl('app_parametre_entreprise_index');
 
 
             if ($form->isValid()) {
 
-                $serviceRepository->add($service, true);
+                $entrepriseRepository->save($entreprise, true);
                 $data = true;
-                $message       = 'Opération effectuée avec succès';
+                $message = 'Opération effectuée avec succès';
                 $statut = 1;
                 $this->addFlash('success', $message);
             } else {
@@ -248,6 +237,7 @@ class ServiceController extends BaseController
                 }
             }
 
+
             if ($isAjax) {
                 return $this->json(compact('statut', 'message', 'redirect', 'data'), $statutCode);
             } else {
@@ -257,21 +247,21 @@ class ServiceController extends BaseController
             }
         }
 
-        return $this->renderForm('parametre/service/edit.html.twig', [
-            'service' => $service,
+        return $this->renderForm('parametre/entreprise/edit.html.twig', [
+            'entreprise' => $entreprise,
             'form' => $form,
         ]);
     }
 
-    #[Route('/{id}/delete', name: 'app_parametre_service_delete', methods: ['DELETE', 'GET'])]
-    public function delete(Request $request, Service $service, ServiceRepository $serviceRepository): Response
+    #[Route('/{id}/delete', name: 'app_parametre_entreprise_delete', methods: ['DELETE', 'GET'])]
+    public function delete(Request $request, Entreprise $entreprise, EntrepriseRepository $entrepriseRepository): Response
     {
         $form = $this->createFormBuilder()
             ->setAction(
                 $this->generateUrl(
-                    'app_parametre_service_delete',
+                    'app_parametre_entreprise_delete',
                     [
-                        'id' => $service->getId()
+                        'id' => $entreprise->getId()
                     ]
                 )
             )
@@ -280,16 +270,15 @@ class ServiceController extends BaseController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $data = true;
-            $serviceRepository->remove($service);
-            $serviceRepository->flush();
+            $entrepriseRepository->remove($entreprise, true);
 
-            $redirect = $this->generateUrl('app_parametre_service_index');
+            $redirect = $this->generateUrl('app_parametre_entreprise_index');
 
             $message = 'Opération effectuée avec succès';
 
             $response = [
-                'statut'   => 1,
-                'message'  => $message,
+                'statut' => 1,
+                'message' => $message,
                 'redirect' => $redirect,
                 'data' => $data
             ];
@@ -303,8 +292,8 @@ class ServiceController extends BaseController
             }
         }
 
-        return $this->renderForm('parametre/service/delete.html.twig', [
-            'service' => $service,
+        return $this->renderForm('parametre/entreprise/delete.html.twig', [
+            'entreprise' => $entreprise,
             'form' => $form,
         ]);
     }

@@ -15,8 +15,8 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: UtilisateurRepository::class)]
 #[UniqueEntity(['username'], message: 'Ce pseudo est déjà utilisé')]
-#[ORM\Table(name:'user_utilisateur')]
-class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface, EquatableInterface,TwoFactorInterface
+#[ORM\Table(name: 'user_utilisateur')]
+class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface, EquatableInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -26,9 +26,6 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface, 
     #[ORM\Column(length: 180, unique: true)]
     #[Assert\NotBlank(message: 'Veuillez renseigner un pseudo')]
     private ?string $username = null;
-
-    #[ORM\Column(length: 180,nullable:true)]
-    private ?string $authCode = null;
 
 
     #[ORM\Column]
@@ -46,11 +43,11 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface, 
     #[Assert\NotBlank(message: 'Veuillez sélectionner un employé', groups: ['Registration'])]
     private ?Employe $employe = null;
 
-   /* #[ORM\ManyToMany(targetEntity: Groupe::class, inversedBy: 'utilisateurs')]
+    /* #[ORM\ManyToMany(targetEntity: Groupe::class, inversedBy: 'utilisateurs')]
     #[ORM\JoinTable(name: 'user_utilisateur_groupe')]
     private Collection $groupes;*/
 
-  
+
 
     #[ORM\ManyToOne(inversedBy: 'utilisateurs')]
     private ?Groupe $groupe = null;
@@ -180,7 +177,7 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface, 
     {
         $roleAlias = strtoupper(strtr($alias, '.', '_'));
         $role = "{$roleName}_{$module}_{$roleAlias}";
-       
+
         return $this->hasRole('ROLE_ADMIN') || $this->hasRole($role);
     }
 
@@ -191,7 +188,7 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface, 
         $child = strtoupper($child);
         $roleName = strtoupper($roleName);
         $result = false;
-       
+
         foreach ($this->getRoles() as $role) {
             $regex = "^ROLE_{$roleName}_{$module}_([A-Z_]+)";
             if ($child) {
@@ -244,17 +241,17 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface, 
     public function hasAllRoleOnModule($roleName, $module, $controller, $child = null, $as = null)
     {
         $module = strtoupper($module);
-        
+
         $roleName = strtoupper($roleName);
         $controller = $as ? strtoupper($as) : strtoupper($controller);
         $result = false;
 
-        
-       
-       
+
+
+
         foreach ($this->getRoles() as $role) {
             $regex = "^ROLE_{$roleName}_{$module}_{$controller}";
-            
+
             if ($child) {
                 $regex .= strtoupper("_{$child}");
             }
@@ -268,11 +265,11 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface, 
     }
 
 
-    
+
     public function hasRoleStartsWith($roleName)
     {
         $result = false;
-       
+
         foreach ($this->getRoles() as $role) {
             if (preg_match("/^{$roleName}/", $role, $matches)) {
                 $result = true;
@@ -288,17 +285,17 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface, 
         $result = false;
 
         $exclude = (array)$exclude;
-        
-       
+
+
         foreach ($this->getRoles() as $role) {
             $regex = "/^ROLE_([A-Z_]+)_{$module}_";
 
-           // dd($regex);
+            // dd($regex);
             if ($append) {
                 $regex .= strtoupper($append);
             }
             $regex .= "/";
-            
+
             if (preg_match($regex, $role, $matches)) {
                 $lowerMatch = strtolower($matches[1]);
                 if (!$exclude || ($exclude &&  !in_array($lowerMatch, $exclude))) {
@@ -311,7 +308,7 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface, 
     }
 
 
-     /**
+    /**
      * {@inheritdoc}
      */
     public function addRole($role)
@@ -328,9 +325,9 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface, 
         return $this;
     }
 
-  
 
-     /**
+
+    /**
      * @param $roles
      */
     public function hasRoles($roles)
@@ -346,10 +343,10 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface, 
 
     public function getNomComplet()
     {
-        return $this->getEmploye() ? $this->getEmploye()->getNomComplet(): '';
+        return $this->getEmploye() ? $this->getEmploye()->getNomComplet() : '';
     }
 
-  
+
 
     public function getGroupe(): ?Groupe
     {
@@ -361,34 +358,5 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface, 
         $this->groupe = $groupe;
 
         return $this;
-    }
-
-
-    public function isEmailAuthEnabled(): bool
-    {
-        // TODO: Implement isEmailAuthEnabled() method.
-        return true;
-    }
-
-    public function getEmailAuthRecipient(): string
-    {
-        // TODO: Implement getEmailAuthRecipient() method.
-        return $this->getEmploye()->getAdresseMail();
-    }
-
-    public function getEmailAuthCode(): ?string
-    {
-        // TODO: Implement getEmailAuthCode() method.
-        if(null === $this->authCode){
-            throw new \LogicException('le email na pas ete setter');
-        }
-        return $this->authCode;
-    }
-
-    public function setEmailAuthCode(string $authCode): void
-    {
-        // TODO: Implement setEmailAuthCode() method.
-        $this->authCode = $authCode;
-
     }
 }
