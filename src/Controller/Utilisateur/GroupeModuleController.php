@@ -29,69 +29,65 @@ class GroupeModuleController extends BaseController
     public function index(Request $request, DataTableFactory $dataTableFactory): Response
     {
 
-        $permission = $this->menu->getPermissionIfDifferentNull($this->security->getUser()->getGroupe()->getId(),self::INDEX_ROOT_NAME);
+        $permission = $this->menu->getPermissionIfDifferentNull($this->security->getUser()->getGroupe()->getId(), self::INDEX_ROOT_NAME);
 
         $table = $dataTableFactory->create()
             ->add('titre', TextColumn::class, ['label' => 'Libellé'])
             ->add('ordre', TextColumn::class, ['label' => 'Ordre'])
             ->createAdapter(ORMAdapter::class, [
-            'entity' => GroupeModule::class,
-        ])
-        ->setName('dt_app_utilisateur_groupe_module');
-        if($permission != null){
+                'entity' => GroupeModule::class,
+            ])
+            ->setName('dt_app_utilisateur_groupe_module');
+        if ($permission != null) {
             $renders = [
                 'edit' =>  new ActionRender(function () use ($permission) {
-                    if($permission == 'R'){
+                    if ($permission == 'R') {
                         return false;
-                    }elseif($permission == 'RD'){
+                    } elseif ($permission == 'RD') {
                         return false;
-                    }elseif($permission == 'RU'){
+                    } elseif ($permission == 'RU') {
                         return true;
-                    }elseif($permission == 'RUD'){
+                    } elseif ($permission == 'RUD') {
                         return true;
-                    }elseif($permission == 'CRU'){
+                    } elseif ($permission == 'CRU') {
+                        return true;
+                    } elseif ($permission == 'CR') {
+                        return false;
+                    } else {
                         return true;
                     }
-                    elseif($permission == 'CR'){
-                        return false;
-                    }else{
-                        return true;
-                    }
-
                 }),
                 'delete' => new ActionRender(function () use ($permission) {
-                    if($permission == 'R'){
+                    if ($permission == 'R') {
                         return false;
-                    }elseif($permission == 'RD'){
+                    } elseif ($permission == 'RD') {
                         return true;
-                    }elseif($permission == 'RU'){
+                    } elseif ($permission == 'RU') {
                         return false;
-                    }elseif($permission == 'RUD'){
+                    } elseif ($permission == 'RUD') {
                         return true;
-                    }elseif($permission == 'CRU'){
+                    } elseif ($permission == 'CRU') {
                         return false;
-                    }
-                    elseif($permission == 'CR'){
+                    } elseif ($permission == 'CR') {
                         return false;
-                    }else{
+                    } else {
                         return true;
                     }
                 }),
                 'show' => new ActionRender(function () use ($permission) {
-                    if($permission == 'R'){
+                    if ($permission == 'R') {
                         return true;
-                    }elseif($permission == 'RD'){
+                    } elseif ($permission == 'RD') {
                         return true;
-                    }elseif($permission == 'RU'){
+                    } elseif ($permission == 'RU') {
                         return true;
-                    }elseif($permission == 'RUD'){
+                    } elseif ($permission == 'RUD') {
                         return true;
-                    }elseif($permission == 'CRU'){
+                    } elseif ($permission == 'CRU') {
                         return true;
-                    }
-                    elseif($permission == 'CR'){
+                    } elseif ($permission == 'CR') {
                         return true;
-                    }else{
+                    } else {
                         return true;
                     }
                     return true;
@@ -110,38 +106,22 @@ class GroupeModuleController extends BaseController
 
             if ($hasActions) {
                 $table->add('id', TextColumn::class, [
-                    'label' => 'Actions'
-                    , 'orderable' => false
-                    ,'globalSearchable' => false
-                    ,'className' => 'grid_row_actions'
-                    , 'render' => function ($value, Utilisateur $context) use ($renders) {
+                    'label' => 'Actions', 'orderable' => false, 'globalSearchable' => false, 'className' => 'grid_row_actions', 'render' => function ($value, GroupeModule $context) use ($renders) {
                         $options = [
                             'default_class' => 'btn btn-xs btn-clean btn-icon mr-2 ',
                             'target' => '#exampleModalSizeLg2',
 
                             'actions' => [
                                 'edit' => [
-                                    'target'=>'#exampleModalSizeSm2',
-                                    'url' => $this->generateUrl('app_utilisateur_groupe_module_edit', ['id' => $value])
-                                    , 'ajax' => true
-                                    , 'icon' => '%icon% bi bi-pen'
-                                    , 'attrs' => ['class' => 'btn-default']
-                                    , 'render' => $renders['edit']
+                                    'target' => '#exampleModalSizeSm2',
+                                    'url' => $this->generateUrl('app_utilisateur_groupe_module_edit', ['id' => $value]), 'ajax' => true, 'icon' => '%icon% bi bi-pen', 'attrs' => ['class' => 'btn-default'], 'render' => $renders['edit']
                                 ],
                                 'show' => [
-                                    'url' => $this->generateUrl('app_utilisateur_groupe_module_show', ['id' => $value])
-                                    , 'ajax' => true
-                                    , 'icon' => '%icon% bi bi-eye'
-                                    , 'attrs' => ['class' => 'btn-primary']
-                                    , 'render' => $renders['show']
+                                    'url' => $this->generateUrl('app_utilisateur_groupe_module_show', ['id' => $value]), 'ajax' => true, 'icon' => '%icon% bi bi-eye', 'attrs' => ['class' => 'btn-primary'], 'render' => $renders['show']
                                 ],
                                 'delete' => [
                                     'target' => '#exampleModalSizeNormal',
-                                    'url' => $this->generateUrl('app_utilisateur_groupe_module_delete', ['id' => $value])
-                                    , 'ajax' => true
-                                    , 'icon' => '%icon% bi bi-trash'
-                                    , 'attrs' => ['class' => 'btn-danger']
-                                    ,  'render' => $renders['delete']
+                                    'url' => $this->generateUrl('app_utilisateur_groupe_module_delete', ['id' => $value]), 'ajax' => true, 'icon' => '%icon% bi bi-trash', 'attrs' => ['class' => 'btn-danger'],  'render' => $renders['delete']
                                 ]
                             ]
 
@@ -150,7 +130,7 @@ class GroupeModuleController extends BaseController
                     }
                 ]);
             }
-            }
+        }
 
 
         $table->handleRequest($request);
@@ -195,28 +175,23 @@ class GroupeModuleController extends BaseController
                 $message       = 'Opération effectuée avec succès';
                 $statut = 1;
                 $this->addFlash('success', $message);
-
-
             } else {
                 $message = $formError->all($form);
                 $statut = 0;
                 $statutCode = Response::HTTP_INTERNAL_SERVER_ERROR;
                 if (!$isAjax) {
-                  $this->addFlash('warning', $message);
+                    $this->addFlash('warning', $message);
                 }
-
             }
 
 
             if ($isAjax) {
-                return $this->json( compact('statut', 'message', 'redirect', 'data'), $statutCode);
+                return $this->json(compact('statut', 'message', 'redirect', 'data'), $statutCode);
             } else {
                 if ($statut == 1) {
                     return $this->redirect($redirect, Response::HTTP_OK);
                 }
             }
-
-
         }
 
         return $this->renderForm('utilisateur/groupe_module/new.html.twig', [
@@ -240,7 +215,7 @@ class GroupeModuleController extends BaseController
         $form = $this->createForm(GroupeModuleType::class, $groupeModule, [
             'method' => 'POST',
             'action' => $this->generateUrl('app_utilisateur_groupe_module_edit', [
-                    'id' =>  $groupeModule->getId()
+                'id' =>  $groupeModule->getId()
             ])
         ]);
 
@@ -264,21 +239,18 @@ class GroupeModuleController extends BaseController
                 $message       = 'Opération effectuée avec succès';
                 $statut = 1;
                 $this->addFlash('success', $message);
-
-
             } else {
                 $message = $formError->all($form);
                 $statut = 0;
                 $statutCode = Response::HTTP_INTERNAL_SERVER_ERROR;
                 if (!$isAjax) {
-                  $this->addFlash('warning', $message);
+                    $this->addFlash('warning', $message);
                 }
-
             }
 
 
             if ($isAjax) {
-                return $this->json( compact('statut', 'message', 'redirect', 'data'), $statutCode);
+                return $this->json(compact('statut', 'message', 'redirect', 'data'), $statutCode);
             } else {
                 if ($statut == 1) {
                     return $this->redirect($redirect, Response::HTTP_OK);
@@ -298,14 +270,14 @@ class GroupeModuleController extends BaseController
         $form = $this->createFormBuilder()
             ->setAction(
                 $this->generateUrl(
-                'app_utilisateur_groupe_module_delete'
-                ,   [
+                    'app_utilisateur_groupe_module_delete',
+                    [
                         'id' => $groupeModule->getId()
                     ]
                 )
             )
             ->setMethod('DELETE')
-        ->getForm();
+            ->getForm();
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $data = true;

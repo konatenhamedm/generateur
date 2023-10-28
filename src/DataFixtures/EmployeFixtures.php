@@ -17,6 +17,7 @@ class EmployeFixtures extends Fixture implements DependentFixtureInterface
         $employe->setPrenom('Admin');
         $employe->setCivilite($this->getReference(CiviliteFixtures::DEFAULT_CIVILITE_REFERENCE));
         $employe->setFonction($this->getReference(FonctionFixtures::DEFAULT_FONCTION_EMPLOYE));
+        $employe->setEntreprise($this->getReference(EntrepriseFixtures::DEFAULT_ENTEPRISE_REFERENCE));
         $employe->setContact('00000000');
         $employe->setMatricule('00000000');
         $employe->setAdresseMail('admin@knh.com');
@@ -31,7 +32,8 @@ class EmployeFixtures extends Fixture implements DependentFixtureInterface
     {
         return [
             CiviliteFixtures::class,
-            FonctionFixtures::class
+            FonctionFixtures::class,
+            EntrepriseFixtures::class
         ];
     }
 }

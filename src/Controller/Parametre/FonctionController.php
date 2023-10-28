@@ -24,7 +24,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-#[Route('/admin/parametre/fonction')]
+#[Route('/ads/admin/parametre/fonction')]
 class FonctionController extends BaseController
 {
     const INDEX_ROOT_NAME = 'app_parametre_fonction_index';
@@ -33,69 +33,65 @@ class FonctionController extends BaseController
     #[Route('/', name: 'app_parametre_fonction_index', methods: ['GET', 'POST'])]
     public function index(Request $request, DataTableFactory $dataTableFactory): Response
     {
-        $permission = $this->menu->getPermissionIfDifferentNull($this->security->getUser()->getGroupe()->getId(),self::INDEX_ROOT_NAME);
+        $permission = $this->menu->getPermissionIfDifferentNull($this->security->getUser()->getGroupe()->getId(), self::INDEX_ROOT_NAME);
 
         $table = $dataTableFactory->create()
-        ->add('code', TextColumn::class, ['label' => 'Code'])
-        ->add('libelle', TextColumn::class, ['label' => 'Libellé'])
-        ->createAdapter(ORMAdapter::class, [
-            'entity' => Fonction::class,
-        ])
-        ->setName('dt_app_parametre_fonction');
-        if($permission != null){
+            ->add('code', TextColumn::class, ['label' => 'Code'])
+            ->add('libelle', TextColumn::class, ['label' => 'Libellé'])
+            ->createAdapter(ORMAdapter::class, [
+                'entity' => Fonction::class,
+            ])
+            ->setName('dt_app_parametre_fonction');
+        if ($permission != null) {
             $renders = [
                 'edit' =>  new ActionRender(function () use ($permission) {
-                    if($permission == 'R'){
+                    if ($permission == 'R') {
                         return false;
-                    }elseif($permission == 'RD'){
+                    } elseif ($permission == 'RD') {
                         return false;
-                    }elseif($permission == 'RU'){
+                    } elseif ($permission == 'RU') {
                         return true;
-                    }elseif($permission == 'RUD'){
+                    } elseif ($permission == 'RUD') {
                         return true;
-                    }elseif($permission == 'CRU'){
+                    } elseif ($permission == 'CRU') {
+                        return true;
+                    } elseif ($permission == 'CR') {
+                        return false;
+                    } else {
                         return true;
                     }
-                    elseif($permission == 'CR'){
-                        return false;
-                    }else{
-                        return true;
-                    }
-
                 }),
                 'delete' => new ActionRender(function () use ($permission) {
-                    if($permission == 'R'){
+                    if ($permission == 'R') {
                         return false;
-                    }elseif($permission == 'RD'){
+                    } elseif ($permission == 'RD') {
                         return true;
-                    }elseif($permission == 'RU'){
+                    } elseif ($permission == 'RU') {
                         return false;
-                    }elseif($permission == 'RUD'){
+                    } elseif ($permission == 'RUD') {
                         return true;
-                    }elseif($permission == 'CRU'){
+                    } elseif ($permission == 'CRU') {
                         return false;
-                    }
-                    elseif($permission == 'CR'){
+                    } elseif ($permission == 'CR') {
                         return false;
-                    }else{
+                    } else {
                         return true;
                     }
                 }),
                 'show' => new ActionRender(function () use ($permission) {
-                    if($permission == 'R'){
+                    if ($permission == 'R') {
                         return true;
-                    }elseif($permission == 'RD'){
+                    } elseif ($permission == 'RD') {
                         return true;
-                    }elseif($permission == 'RU'){
+                    } elseif ($permission == 'RU') {
                         return true;
-                    }elseif($permission == 'RUD'){
+                    } elseif ($permission == 'RUD') {
                         return true;
-                    }elseif($permission == 'CRU'){
+                    } elseif ($permission == 'CRU') {
                         return true;
-                    }
-                    elseif($permission == 'CR'){
+                    } elseif ($permission == 'CR') {
                         return true;
-                    }else{
+                    } else {
                         return true;
                     }
                     return true;
@@ -115,37 +111,21 @@ class FonctionController extends BaseController
 
             if ($hasActions) {
                 $table->add('id', TextColumn::class, [
-                    'label' => 'Actions'
-                    , 'orderable' => false
-                    ,'globalSearchable' => false
-                    ,'className' => 'grid_row_actions'
-                    , 'render' => function ($value, Fonction $context) use ($renders) {
+                    'label' => 'Actions', 'orderable' => false, 'globalSearchable' => false, 'className' => 'grid_row_actions', 'render' => function ($value, Fonction $context) use ($renders) {
                         $options = [
                             'default_class' => 'btn btn-xs btn-clean btn-icon mr-2 ',
                             'target' => '#exampleModalSizeLg2',
 
                             'actions' => [
                                 'edit' => [
-                                    'url' => $this->generateUrl('app_parametre_fonction_edit', ['id' => $value])
-                                    , 'ajax' => true
-                                    , 'icon' => '%icon% bi bi-pen'
-                                    , 'attrs' => ['class' => 'btn-default']
-                                    , 'render' => $renders['edit']
+                                    'url' => $this->generateUrl('app_parametre_fonction_edit', ['id' => $value]), 'ajax' => true, 'icon' => '%icon% bi bi-pen', 'attrs' => ['class' => 'btn-default'], 'render' => $renders['edit']
                                 ],
                                 'show' => [
-                                    'url' => $this->generateUrl('app_parametre_fonction_show', ['id' => $value])
-                                    , 'ajax' => true
-                                    , 'icon' => '%icon% bi bi-eye'
-                                    , 'attrs' => ['class' => 'btn-primary']
-                                    , 'render' => $renders['show']
+                                    'url' => $this->generateUrl('app_parametre_fonction_show', ['id' => $value]), 'ajax' => true, 'icon' => '%icon% bi bi-eye', 'attrs' => ['class' => 'btn-primary'], 'render' => $renders['show']
                                 ],
                                 'delete' => [
                                     'target' => '#exampleModalSizeNormal',
-                                    'url' => $this->generateUrl('app_parametre_fonction_delete', ['id' => $value])
-                                    , 'ajax' => true
-                                    , 'icon' => '%icon% bi bi-trash'
-                                    , 'attrs' => ['class' => 'btn-main']
-                                    ,  'render' => $renders['delete']
+                                    'url' => $this->generateUrl('app_parametre_fonction_delete', ['id' => $value]), 'ajax' => true, 'icon' => '%icon% bi bi-trash', 'attrs' => ['class' => 'btn-main'],  'render' => $renders['delete']
                                 ]
                             ]
 
@@ -155,7 +135,7 @@ class FonctionController extends BaseController
                 ]);
             }
         }
-       
+
 
         $table->handleRequest($request);
 
@@ -189,38 +169,33 @@ class FonctionController extends BaseController
             $response = [];
             $redirect = $this->generateUrl('app_parametre_fonction_index');
 
-           
+
 
 
             if ($form->isValid()) {
-                
+
                 $fonctionRepository->add($fonction, true);
                 $data = true;
                 $message       = 'Opération effectuée avec succès';
                 $statut = 1;
                 $this->addFlash('success', $message);
-
-                
             } else {
                 $message = $formError->all($form);
                 $statut = 0;
                 $statutCode = Response::HTTP_INTERNAL_SERVER_ERROR;
                 if (!$isAjax) {
-                  $this->addFlash('warning', $message);
+                    $this->addFlash('warning', $message);
                 }
-                
             }
 
 
             if ($isAjax) {
-                return $this->json( compact('statut', 'message', 'redirect', 'data'), $statutCode);
+                return $this->json(compact('statut', 'message', 'redirect', 'data'), $statutCode);
             } else {
                 if ($statut == 1) {
                     return $this->redirect($redirect, Response::HTTP_OK);
                 }
             }
-
-            
         }
 
         return $this->renderForm('parametre/fonction/new.html.twig', [
@@ -240,11 +215,11 @@ class FonctionController extends BaseController
     #[Route('/{id}/edit', name: 'app_parametre_fonction_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Fonction $fonction, FonctionRepository $fonctionRepository, FormError $formError): Response
     {
-        
+
         $form = $this->createForm(FonctionType::class, $fonction, [
             'method' => 'POST',
             'action' => $this->generateUrl('app_parametre_fonction_edit', [
-                    'id' =>  $fonction->getId()
+                'id' =>  $fonction->getId()
             ])
         ]);
 
@@ -260,29 +235,26 @@ class FonctionController extends BaseController
             $response = [];
             $redirect = $this->generateUrl('app_parametre_fonction_index');
 
-           
+
             if ($form->isValid()) {
-                
+
                 $fonctionRepository->add($fonction, true);
                 $data = true;
                 $message       = 'Opération effectuée avec succès';
                 $statut = 1;
                 $this->addFlash('success', $message);
-
-                
             } else {
                 $message = $formError->all($form);
                 $statut = 0;
                 $statutCode = Response::HTTP_INTERNAL_SERVER_ERROR;
                 if (!$isAjax) {
-                  $this->addFlash('warning', $message);
+                    $this->addFlash('warning', $message);
                 }
-                
             }
 
 
             if ($isAjax) {
-                return $this->json( compact('statut', 'message', 'redirect', 'data'), $statutCode);
+                return $this->json(compact('statut', 'message', 'redirect', 'data'), $statutCode);
             } else {
                 if ($statut == 1) {
                     return $this->redirect($redirect, Response::HTTP_OK);
@@ -302,14 +274,14 @@ class FonctionController extends BaseController
         $form = $this->createFormBuilder()
             ->setAction(
                 $this->generateUrl(
-                'app_parametre_fonction_delete'
-                ,   [
+                    'app_parametre_fonction_delete',
+                    [
                         'id' => $fonction->getId()
                     ]
                 )
             )
             ->setMethod('DELETE')
-        ->getForm();
+            ->getForm();
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $data = true;
@@ -343,10 +315,10 @@ class FonctionController extends BaseController
 
 
     #[Route('/fonction/addFile', name: 'fonction_addFile_new', methods: ['GET', 'POST'])]
-    public function addFile(Request $request,FormError $formError,FonctionRepository $fonctionRepository, EntityManagerInterface $entityManager)
+    public function addFile(Request $request, FormError $formError, FonctionRepository $fonctionRepository, EntityManagerInterface $entityManager)
     {
         $dossier = new UploadFile();
-        $form = $this->createForm(UploadFileType::class,$dossier, [
+        $form = $this->createForm(UploadFileType::class, $dossier, [
             'method' => 'POST',
             'action' => $this->generateUrl('fonction_addFile_new')
         ]);
@@ -386,8 +358,7 @@ class FonctionController extends BaseController
                 $sheetData = $spreadsheet->getActiveSheet()->toArray(null, true, true, true); // here, the read data is turned into an array
 
 
-                foreach ($sheetData as $Row)
-                {
+                foreach ($sheetData as $Row) {
 
                     $ref = $Row['A'];     // store the first_name on each iteration
                     $desig = $Row['B'];   // store the last_name on each iteration
@@ -397,8 +368,7 @@ class FonctionController extends BaseController
 
 
                     // make sure that the user does not already exists in your db
-                    if (!$fonction_existant)
-                    {
+                    if (!$fonction_existant) {
 
                         $fonction = new Fonction();
                         $fonction->setCode($ref);
@@ -406,7 +376,7 @@ class FonctionController extends BaseController
                         $entityManager->persist($fonction);
                         $entityManager->flush();
                         // here Doctrine checks all the fields of all fetched data and make a transaction to the database.
-                    }else{
+                    } else {
 
                         $fonction_existant->setCode($ref);
                         $fonction_existant->setLibelle($desig);
@@ -419,19 +389,16 @@ class FonctionController extends BaseController
                 $message       = 'Opération effectuée avec succès';
                 $statut = 1;
                 $this->addFlash('success', $message);
-
-
             }
 
 
             if ($isAjax) {
-                return $this->json( compact('statut', 'message', 'redirect', 'data'), $statutCode);
+                return $this->json(compact('statut', 'message', 'redirect', 'data'), $statutCode);
             } else {
                 if ($statut == 1) {
                     return $this->redirect($redirect, Response::HTTP_OK);
                 }
             }
-
         }
         return $this->renderForm('parametre/uploadFile/upload_file_new.html.twig', [
             'form' => $form,
